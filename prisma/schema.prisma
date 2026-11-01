@@ -1,0 +1,831 @@
+// ================================================
+// Career Intelligence Platform — Database Schema
+// Phase 1-2: Foundation + Authentication
+// ================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ================================================
+// IDENTITY
+// ================================================
+
+model User {
+  id            String    @id @default(cuid())
+  username      String    @unique
+  email         String?   @unique
+  phone         String?   @unique
+  passwordHash  String
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  isSuspended   Boolean   @default(false)
+  termsAccepted Boolean   @default(false)
+  role          UserRole  @default(USER)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  sessions          UserSession[]
+  otpVerifications   OtpVerification[]
+  passwordResetTokens PasswordResetToken[]
+  profile            Profile?
+  education          Education[]
+  careerGoals        CareerGoal[]
+  interests          UserInterest[]
+  socialProfiles     SocialProfile[]
+  userSkills         UserSkill[]
+  assessmentSubmissions AssessmentSubmission[]
+  userProjects       UserProject[]
+  userOpportunities  UserOpportunity[]
+  tailoredResumes    TailoredResume[]
+  careerInsights     AiCareerInsight[]
+  chatMessages       AiChatMessage[]
+  auditLogs          AuditLog[]         @relation("AuditActor")
+
+  @@index([email])
+  @@index([username])
+  @@index([phone])
+  @@map("users")
+}
+
+model UserSession {
+  id          String    @id @default(cuid())
+  userId      String
+  token       String    @unique
+  userAgent   String?
+  ipAddress   String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  revokedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("user_sessions")
+}
+
+model OtpVerification {
+  id          String   @id @default(cuid())
+  userId      String
+  otpHash     String
+  type        OtpType
+  target      String   // email or phone the OTP was sent to
+  attempts    Int      @default(0)
+  isUsed      Boolean  @default(false)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([target])
+  @@map("otp_verifications")
+}
+
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  userId      String
+  tokenHash   String   @unique
+  isUsed      Boolean  @default(false)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+// ================================================
+// PROFILE
+// ================================================
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  firstName         String?
+  lastName          String?
+  preferredName     String?
+  profilePhotoUrl   String?
+  headline          String?
+  about             String?
+  careerObjective   String?
+  dateOfBirth       DateTime?
+  gender            String?
+  country           String?
+  state             String?
+  city              String?
+  preferredRoles    String[] @default([])
+  preferredIndustries String[] @default([])
+  preferredWorkMode WorkMode?
+  preferredLocations String[] @default([])
+  onboardingStep    Int      @default(0)
+  onboardingComplete Boolean @default(false)
+  completionScore   Float    @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Education {
+  id              String          @id @default(cuid())
+  userId          String
+  type            EducationType
+  institution     String
+  degree          String?
+  branch          String?
+  specialization  String?
+  board           String?
+  startDate       DateTime?
+  endDate         DateTime?
+  isCurrent       Boolean         @default(false)
+  yearOrSemester  String?
+  cgpa            Float?
+  percentage      Float?
+  coursework      String[]        @default([])
+  achievements    String[]        @default([])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("education")
+}
+
+model CareerGoal {
+  id              String   @id @default(cuid())
+  userId          String
+  type            GoalType
+  title           String
+  description     String?
+  targetDate      DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("career_goals")
+}
+
+model UserInterest {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  category        String?
+  examples        String?
+  isCustom        Boolean  @default(false)
+  intensity       Int?     // 1-5
+  careerRelevance Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_interests")
+}
+
+model SocialProfile {
+  id          String   @id @default(cuid())
+  userId      String
+  platform    String
+  url         String
+  username    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("social_profiles")
+}
+
+// ================================================
+// SKILLS
+// ================================================
+
+model SkillCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  skills Skill[]
+
+  @@map("skill_categories")
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  categoryId  String
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category    SkillCategory @relation(fields: [categoryId], references: [id])
+  subskills   SkillSubskill[]
+  userSkills  UserSkill[]
+  assessments Assessment[]
+
+  @@index([categoryId])
+  @@map("skills")
+}
+
+model SkillSubskill {
+  id          String   @id @default(cuid())
+  skillId     String
+  name        String
+  slug        String
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, slug])
+  @@index([skillId])
+  @@map("skill_subskills")
+}
+
+model UserSkill {
+  id              String       @id @default(cuid())
+  userId          String
+  skillId         String
+  selfRating      Int?         // 1-10
+  aiEstimate      Float?       // 0-100
+  assessmentScore Float?       // 0-100
+  projectEvidence Float?       // 0-100
+  overallScore    Float?       // 0-100
+  confidence      Float?       // 0-1
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id])
+  history SkillScoreHistory[]
+
+  @@unique([userId, skillId])
+  @@index([userId])
+  @@map("user_skills")
+}
+
+model SkillScoreHistory {
+  id          String   @id @default(cuid())
+  userSkillId String
+  source      String   // assessment, project, self, ai
+  score       Float
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  userSkill UserSkill @relation(fields: [userSkillId], references: [id], onDelete: Cascade)
+
+  @@index([userSkillId])
+  @@map("skill_score_history")
+}
+
+// ================================================
+// ADMIN
+// ================================================
+
+model AdminUser {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          AdminRole @default(SUPER_ADMIN)
+  isMaster      Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions AdminSession[]
+
+  @@map("admin_users")
+}
+
+model AdminSession {
+  id          String    @id @default(cuid())
+  adminUserId String
+  token       String    @unique
+  userAgent   String?
+  ipAddress   String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  revokedAt   DateTime?
+
+  admin AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@index([token])
+  @@map("admin_sessions")
+}
+
+// ================================================
+// AUDIT
+// ================================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String?
+  actorType   String   // user, admin, system
+  action      String
+  entity      String
+  entityId    String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ================================================
+// ENUMS
+// ================================================
+
+enum OtpType {
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
+  PASSWORD_RESET
+  LOGIN
+}
+
+enum WorkMode {
+  REMOTE
+  ONSITE
+  HYBRID
+  ANY
+}
+
+enum EducationType {
+  CLASS_10
+  CLASS_12
+  DIPLOMA
+  BACHELORS
+  MASTERS
+  PHD
+  CERTIFICATION
+  OTHER
+}
+
+enum GoalType {
+  SHORT_TERM
+  LONG_TERM
+  CAREER
+  SKILL
+  PROJECT
+  OTHER
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+// ================================================
+// ASSESSMENTS & EXAMS
+// ================================================
+
+model Assessment {
+  id              String   @id @default(cuid())
+  skillId         String
+  title           String
+  slug            String   @unique
+  description     String?
+  durationMinutes Int      @default(45)
+  totalQuestions  Int      @default(30)
+  passingScore    Float    @default(70.0)
+  difficulty      AssessmentDifficulty @default(INTERMEDIATE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  skill           Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  questions       AssessmentQuestion[]
+  submissions     AssessmentSubmission[]
+
+  @@index([skillId])
+  @@map("assessments")
+}
+
+model AssessmentQuestion {
+  id              String   @id @default(cuid())
+  assessmentId    String
+  questionText    String
+  codeSnippet     String?  @db.Text
+  questionType    QuestionCategory @default(THEORY)
+  difficulty      QuestionDifficulty @default(MEDIUM)
+  points          Int      @default(1)
+  explanation     String?  @db.Text
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  assessment      Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  options         QuestionOption[]
+  userAnswers     UserAnswer[]
+
+  @@index([assessmentId])
+  @@map("assessment_questions")
+}
+
+model QuestionOption {
+  id              String   @id @default(cuid())
+  questionId      String
+  optionText      String
+  codeSnippet     String?  @db.Text
+  isCorrect       Boolean  @default(false)
+  sortOrder       Int      @default(0)
+
+  question        AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userAnswers     UserAnswer[]
+
+  @@index([questionId])
+  @@map("question_options")
+}
+
+model AssessmentSubmission {
+  id                String   @id @default(cuid())
+  userId            String
+  assessmentId      String
+  score             Float    // 0 - 100
+  totalCorrect      Int
+  totalQuestions    Int
+  passed            Boolean
+  timeSpentSeconds  Int
+  categoryScores    Json?    // Category breakdown e.g. { BASIC_KNOWLEDGE: 90, THEORY: 80, ... }
+  createdAt         DateTime @default(now())
+
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessment        Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  answers           UserAnswer[]
+
+  @@index([userId])
+  @@index([assessmentId])
+  @@map("assessment_submissions")
+}
+
+model UserAnswer {
+  id                String   @id @default(cuid())
+  submissionId      String
+  questionId        String
+  selectedOptionId  String?
+  isCorrect         Boolean  @default(false)
+
+  submission        AssessmentSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  question          AssessmentQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption    QuestionOption?      @relation(fields: [selectedOptionId], references: [id])
+
+  @@index([submissionId])
+  @@index([questionId])
+  @@map("user_answers")
+}
+
+enum AssessmentDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum QuestionCategory {
+  BASIC_KNOWLEDGE
+  THEORY
+  PROGRAMMING
+  PROBLEM_SOLVING
+  SYSTEM_DESIGN
+}
+
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// ================================================
+// PHASE 4: AI PROJECTS & DAILY VELOCITY TRACKER
+// ================================================
+
+model ProjectIdea {
+  id                    String        @id @default(cuid())
+  title                 String
+  slug                  String        @unique
+  domain                ProjectDomain @default(FULLSTACK)
+  projectType           ProjectType   @default(SOFTWARE)
+  difficulty            AssessmentDifficulty @default(INTERMEDIATE)
+  problemStatement      String        @db.Text
+  marketNeed            String        @db.Text
+  architectureOverview  String?       @db.Text
+  techStack             String[]      @default([])
+  tags                  String[]      @default([])
+  hardwareRequirements  String?       @db.Text
+  estimatedHours        Int           @default(40)
+  starterMilestones     Json?         // Array of default milestones
+  isSihChallenge        Boolean       @default(false)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  userProjects          UserProject[]
+
+  @@map("project_ideas")
+}
+
+model UserProject {
+  id                    String        @id @default(cuid())
+  userId                String
+  projectIdeaId         String?
+  title                 String
+  slug                  String
+  description           String        @db.Text
+  domain                ProjectDomain @default(FULLSTACK)
+  projectType           ProjectType   @default(SOFTWARE)
+  difficulty            AssessmentDifficulty @default(INTERMEDIATE)
+  status                ProjectStatus @default(IN_PROGRESS)
+  progressPercentage    Float         @default(0)
+  velocityScore         Float         @default(0) // points per week
+  totalHoursLogged      Float         @default(0)
+  repoUrl               String?
+  liveDemoUrl           String?
+  hardwareSpecs         String?       @db.Text
+  startedAt             DateTime      @default(now())
+  completedAt           DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectIdea           ProjectIdea?  @relation(fields: [projectIdeaId], references: [id])
+  milestones            ProjectMilestone[]
+  dailyLogs             ProjectDailyLog[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+  @@map("user_projects")
+}
+
+model ProjectMilestone {
+  id            String      @id @default(cuid())
+  userProjectId String
+  title         String
+  description   String?
+  sortOrder     Int         @default(0)
+  isCompleted   Boolean     @default(false)
+  dueDate       DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime    @default(now())
+
+  userProject   UserProject @relation(fields: [userProjectId], references: [id], onDelete: Cascade)
+
+  @@index([userProjectId])
+  @@map("project_milestones")
+}
+
+model ProjectDailyLog {
+  id                String      @id @default(cuid())
+  userProjectId     String
+  logDate           DateTime    @default(now())
+  hoursSpent        Float
+  tasksCompleted    String      @db.Text
+  blockers          String?     @db.Text
+  gitCommitSha      String?
+  aiProgressFeedback String?    @db.Text
+  velocityGain      Float?      @default(0)
+  createdAt         DateTime    @default(now())
+
+  userProject       UserProject @relation(fields: [userProjectId], references: [id], onDelete: Cascade)
+
+  @@index([userProjectId])
+  @@map("project_daily_logs")
+}
+
+// ================================================
+// PHASE 5: OPPORTUNITIES & INTERNSHIPS
+// ================================================
+
+model Opportunity {
+  id                String          @id @default(cuid())
+  title             String
+  company           String
+  companyLogoUrl    String?
+  location          String
+  workMode          WorkMode        @default(REMOTE)
+  type              OpportunityType @default(INTERNSHIP)
+  stipendOrSalary   String
+  description       String          @db.Text
+  requirements      String[]        @default([])
+  preferredSkills   String[]        @default([])
+  duration          String          @default("3 Months")
+  source            String          @default("LINKEDIN") // LINKEDIN, INTERNSHALA, DIRECT
+  applyUrl          String
+  deadline          DateTime?
+  expertAdvice      String          @db.Text // AI interview prep and advice
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  userOpportunities UserOpportunity[]
+
+  @@map("opportunities")
+}
+
+model UserOpportunity {
+  id                String            @id @default(cuid())
+  userId            String
+  opportunityId     String
+  status            ApplicationStatus @default(SAVED)
+  matchScore        Float             @default(0)
+  notes             String?           @db.Text
+  appliedAt         DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity       Opportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId])
+  @@map("user_opportunities")
+}
+
+// ================================================
+// PHASE 6: TAILORED RESUME BUILDER
+// ================================================
+
+model TailoredResume {
+  id                String   @id @default(cuid())
+  userId            String
+  targetRole        String
+  targetCompany     String?
+  opportunityId     String?
+  summary           String   @db.Text
+  template          String   @default("MODERN") // MODERN, CLASSIC, MINIMAL, EXECUTIVE
+  contentJson       Json     // Dynamic tailored sections
+  matchScore        Float    @default(85)
+  isPublished       Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("tailored_resumes")
+}
+
+// ================================================
+// PHASE 7: AI CAREER INTELLIGENCE & ADVISOR
+// ================================================
+
+model AiCareerInsight {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  overallReadiness    Float    @default(75) // 0-100
+  dimensionScores     Json     // { skillDepth: 80, projectBreadth: 75, industryAlignment: 85, practicalEvidence: 70, consistency: 80, executionVelocity: 78 }
+  aiAnalysis          String   @db.Text
+  recommendationsJson Json     // Array of prioritized actionable next steps
+  updatedAt           DateTime @updatedAt
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_career_insights")
+}
+
+model AiChatMessage {
+  id                String   @id @default(cuid())
+  userId            String
+  role              String   // user, assistant, system
+  content           String   @db.Text
+  suggestedOptions  Json?    // Array of interactive quick-actions or next step buttons
+  createdAt         DateTime @default(now())
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_chat_messages")
+}
+
+// ================================================
+// ADDITIONAL ENUMS
+// ================================================
+
+enum ProjectDomain {
+  FULLSTACK
+  BACKEND
+  FRONTEND
+  AI_ML
+  HARDWARE_IOT
+  CLOUD_DEVOPS
+  CYBERSECURITY
+  SIH_CHALLENGE
+}
+
+enum ProjectType {
+  SOFTWARE
+  HARDWARE
+  HYBRID
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+}
+
+enum OpportunityType {
+  INTERNSHIP
+  JUNIOR_ROLE
+  APPRENTICESHIP
+  CONTRACT
+}
+
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  INTERVIEWING
+  OFFERED
+  REJECTED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+// ================================================
+// ADMIN & SYSTEM EMAIL CONFIGURATION
+// ================================================
+
+model SystemEmailConfig {
+  id            String   @id @default("default")
+  provider      String   @default("mock") // smtp | resend | mock
+  smtpHost      String?  // e.g. smtp.gmail.com
+  smtpPort      Int?     @default(587)
+  smtpUser      String?  // e.g. your_email@gmail.com
+  smtpPass      String?  // app password
+  smtpSecure    Boolean  @default(false)
+  fromEmail     String?  @default("noreply@apin.dev")
+  fromName      String?  @default("APIN — Academic Project & Internship Navigator")
+  resendApiKey  String?
+  isActive      Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  @@map("system_email_configs")
+}
+
+model EmailDeliveryLog {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  provider    String   // GMAIL_SMTP, CUSTOM_SMTP, RESEND, MOCK
+  status      String   // SENT, FAILED
+  error       String?  @db.Text
+  sentAt      DateTime @default(now())
+
+  @@index([to])
+  @@index([sentAt])
+  @@map("email_delivery_logs")
+}
+
+model AdminNotification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String   @db.Text
+  type      String   @default("NEW_USER_SIGNUP") // NEW_USER_SIGNUP, SYSTEM_ALERT, OTP_DISPATCH
+  isRead    Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("admin_notifications")
+}
+
+
+
+

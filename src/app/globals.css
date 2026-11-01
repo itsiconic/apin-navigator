@@ -1,0 +1,569 @@
+@import "tailwindcss";
+
+@theme {
+  /* ========================================
+     Color System — Ice Silver (#DDE3E8), Deep Aubergine (#3A0F34), Marigold (#EAAA00)
+     ======================================== */
+  
+  /* Primary — Deep Aubergine (#3A0F34) Velvet Wine Luxury */
+  --color-primary-50: #FAF5F9;
+  --color-primary-100: #F3E5F1;
+  --color-primary-200: #E6C8E2;
+  --color-primary-300: #D3A1CC;
+  --color-primary-400: #B76EB0;
+  --color-primary-500: #883280;
+  --color-primary-600: #5C1956;
+  --color-primary-700: #3A0F34; /* Core Deep Aubergine */
+  --color-primary-800: #2C0A27;
+  --color-primary-900: #1E061B;
+  --color-primary-950: #120310;
+  
+  /* Neutral / Surface — Ice Silver (#DDE3E8) Cool Metallic Refraction */
+  --color-surface-50: #F6F8FA;
+  --color-surface-100: #EDF1F4;
+  --color-surface-200: #DDE3E8; /* Core Ice Silver */
+  --color-surface-300: #C7D1D9;
+  --color-surface-400: #A2B1BF;
+  --color-surface-500: #748493;
+  --color-surface-600: #505F6D;
+  --color-surface-700: #37434D;
+  --color-surface-800: #242C33;
+  --color-surface-900: #151A1E;
+  --color-surface-950: #0B0E10;
+  
+  /* Accent — Vibrant Golden Marigold (#EAAA00) */
+  --color-accent-50: #FEF9EB;
+  --color-accent-100: #FDF1CD;
+  --color-accent-200: #FBE29B;
+  --color-accent-300: #F7CF62;
+  --color-accent-400: #F1BD2B;
+  --color-accent-500: #EAAA00; /* Core Marigold */
+  --color-accent-600: #C78D00;
+  --color-accent-700: #9E6C00;
+  --color-accent-800: #785005;
+  --color-accent-900: #523606;
+  --color-accent-950: #2D1C02;
+
+  /* Explicit Aubergine & Marigold helpers */
+  --color-aubergine-50: #FAF5F9;
+  --color-aubergine-100: #F3E5F1;
+  --color-aubergine-200: #E6C8E2;
+  --color-aubergine-500: #883280;
+  --color-aubergine-600: #5C1956;
+  --color-aubergine-700: #3A0F34;
+  --color-aubergine-800: #2C0A27;
+  --color-aubergine-900: #1E061B;
+
+  --color-marigold-50: #FEF9EB;
+  --color-marigold-100: #FDF1CD;
+  --color-marigold-200: #FBE29B;
+  --color-marigold-300: #F7CF62;
+  --color-marigold-400: #F1BD2B;
+  --color-marigold-500: #EAAA00;
+  --color-marigold-600: #C78D00;
+  --color-marigold-700: #9E6C00;
+  
+  /* Success — Muted Sage Emerald */
+  --color-success-50: #F0F9F4;
+  --color-success-500: #1B834D;
+  --color-success-600: #14683D;
+  --color-success-700: #0E4E2D;
+  
+  /* Warning — Golden Marigold */
+  --color-warning-50: #FEF9EB;
+  --color-warning-500: #EAAA00;
+  --color-warning-600: #C78D00;
+  
+  /* Danger — Crimson Velvet */
+  --color-danger-50: #FDF2F2;
+  --color-danger-500: #D32F2F;
+  --color-danger-600: #B71C1C;
+  
+  /* Info — Cool Ice Slate */
+  --color-info-50: #F0F5FA;
+  --color-info-500: #3B7EA1;
+  --color-info-600: #2E6582;
+
+  /* ========================================
+     Typography
+     ======================================== */
+  --font-sans: var(--font-sans, 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif);
+  --font-mono: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+
+  /* ========================================
+     Radius
+     ======================================== */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 9999px;
+
+  /* ========================================
+     Shadows — Deep Aubergine & Marigold Ambient 3D Elevation
+     ======================================== */
+  --shadow-xs: 0 1px 2px 0 rgb(58 15 52 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(58 15 52 / 0.05), 0 1px 2px -1px rgb(58 15 52 / 0.04);
+  --shadow-md: 0 4px 14px -1px rgb(58 15 52 / 0.08), 0 2px 6px -2px rgb(234 170 0 / 0.06);
+  --shadow-lg: 0 16px 32px -4px rgb(58 15 52 / 0.12), 0 6px 16px -2px rgb(234 170 0 / 0.08);
+  --shadow-xl: 0 28px 48px -6px rgb(58 15 52 / 0.16), 0 12px 24px -4px rgb(234 170 0 / 0.1);
+  --shadow-3d: 0 20px 40px -10px rgba(58, 15, 52, 0.15), 0 8px 20px -4px rgba(234, 170, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  --shadow-3d-active: 0 4px 12px -2px rgba(58, 15, 52, 0.1), 0 2px 6px rgba(234, 170, 0, 0.08);
+  --shadow-glass: 0 8px 32px 0 rgba(58, 15, 52, 0.08);
+  --shadow-marigold: 0 4px 24px -2px rgba(234, 170, 0, 0.4);
+  --shadow-aubergine: 0 8px 28px -2px rgba(58, 15, 52, 0.3);
+
+  /* ========================================
+     Animations
+     ======================================== */
+  --animate-fade-in: fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-down: slide-down 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-scale-in: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-spin-slow: spin 4s linear infinite;
+  --animate-pulse-soft: pulse-soft 2.8s ease-in-out infinite;
+  --animate-glass-shimmer: glass-shimmer 4s ease-in-out infinite;
+  --animate-float-3d: float-3d 5s ease-in-out infinite;
+  --animate-float-slow: float-slow-3d 7s ease-in-out infinite;
+  --animate-float-reverse: float-reverse-3d 6s ease-in-out infinite;
+  --animate-page-enter: page-enter-3d 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialog-3d: dialog-enter-3d 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-shimmer-flow: shimmer-flow-3d 2.8s infinite linear;
+}
+
+/* ========================================
+   3D Keyframes & Smooth Kinetic Transforms
+   ======================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px) translateZ(0); }
+  to { opacity: 1; transform: translateY(0) translateZ(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px) translateZ(0); }
+  to { opacity: 1; transform: translateY(0) translateZ(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95) translateZ(0); }
+  to { opacity: 1; transform: scale(1) translateZ(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(0.985); }
+}
+
+@keyframes glass-shimmer {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX(250%) skewX(-20deg); }
+}
+
+@keyframes float-3d {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg) translateZ(0);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg) translateZ(10px);
+  }
+}
+
+@keyframes float-slow-3d {
+  0%, 100% {
+    transform: translateY(0px) rotateZ(0deg) translateZ(0);
+  }
+  50% {
+    transform: translateY(-14px) rotateZ(1.5deg) translateZ(16px);
+  }
+}
+
+@keyframes float-reverse-3d {
+  0%, 100% {
+    transform: translateY(-8px) rotateX(-2deg) rotateY(2deg) translateZ(12px);
+  }
+  50% {
+    transform: translateY(4px) rotateX(1deg) rotateY(-1deg) translateZ(0);
+  }
+}
+
+@keyframes page-enter-3d {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) translateY(14px) scale(0.985) rotateX(1.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) translateY(0) scale(1) rotateX(0deg);
+  }
+}
+
+@keyframes dialog-enter-3d {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) translate(-50%, -46%) scale(0.92) rotateX(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) translate(-50%, -50%) scale(1) rotateX(0deg);
+  }
+}
+
+@keyframes shimmer-flow-3d {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-glow-3d {
+  0%, 100% {
+    box-shadow: 0 0 15px -3px rgba(234, 170, 0, 0.25), 0 0 6px rgba(58, 15, 52, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 28px 2px rgba(234, 170, 0, 0.5), 0 0 12px rgba(58, 15, 52, 0.25);
+  }
+}
+
+/* ========================================
+   Base Styles & Hardware Acceleration
+   ======================================== */
+
+* {
+  border-color: var(--color-surface-200);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-surface-900);
+  background-color: var(--color-surface-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(221, 227, 232, 0.65) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(58, 15, 52, 0.05) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, rgba(234, 170, 0, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(221, 227, 232, 0.35) 0px, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* ========================================
+   3D Perspective & Spatial Depth Hierarchy
+   ======================================== */
+
+.perspective-800 {
+  perspective: 800px;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.depth-1 {
+  transform: translateZ(10px);
+}
+
+.depth-2 {
+  transform: translateZ(20px);
+}
+
+.depth-3 {
+  transform: translateZ(32px);
+}
+
+.depth-float {
+  transform: translateZ(48px);
+}
+
+/* ========================================
+   Ultra-Smooth 3D Card Interactive Engine
+   Zero lag, GPU-accelerated transforms & Specular Glare
+   ======================================== */
+
+.card-interactive,
+.glass-card,
+[data-card],
+.dashboard-card,
+.portal-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s ease,
+              background-color 0.24s ease,
+              filter 0.2s ease;
+  will-change: transform, box-shadow;
+  overflow: hidden;
+}
+
+/* 3D Specular Light Sheen Overlay */
+.card-interactive::after,
+.glass-card::after,
+[data-card]::after,
+.dashboard-card::after,
+.portal-card::after {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(234, 170, 0, 0.2) 50%,
+    rgba(255, 255, 255, 0.35) 55%,
+    transparent 75%
+  );
+  transform: translateX(-100%) translateY(-100%) rotate(25deg);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.card-interactive:hover::after,
+.glass-card:hover::after,
+[data-card]:hover::after,
+.dashboard-card:hover::after,
+.portal-card:hover::after {
+  transform: translateX(100%) translateY(100%) rotate(25deg);
+  opacity: 1;
+}
+
+/* 3D Hover Elevation */
+.card-interactive:hover,
+.glass-card:hover,
+[data-card]:hover,
+.dashboard-card:hover,
+.portal-card:hover {
+  transform: perspective(1200px) translateY(-6px) translateZ(14px) rotateX(1.8deg) scale3d(1.012, 1.012, 1.012);
+  box-shadow: 
+    0 22px 42px -8px rgba(58, 15, 52, 0.14),
+    0 8px 20px -3px rgba(234, 170, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.95) inset;
+  border-color: rgba(234, 170, 0, 0.55);
+}
+
+/* 3D Active Tactile Cushion Press */
+.card-interactive:active,
+.glass-card:active,
+[data-card]:active,
+.dashboard-card:active,
+.portal-card:active {
+  transform: perspective(1200px) scale(0.985) translateY(1px) translateZ(-4px) !important;
+  box-shadow: 
+    0 6px 16px -2px rgba(58, 15, 52, 0.1),
+    0 2px 6px rgba(234, 170, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset !important;
+  filter: brightness(0.98);
+  transition-duration: 0.08s !important;
+}
+
+/* ========================================
+   Glassmorphism & Liquid Glass Utility Classes
+   ======================================== */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(221, 227, 232, 0.92);
+  box-shadow: 
+    0 4px 20px -2px rgba(58, 15, 52, 0.05),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.glass-panel {
+  background: rgba(246, 248, 250, 0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(221, 227, 232, 0.9);
+  box-shadow: 
+    0 12px 32px -4px rgba(58, 15, 52, 0.08),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(221, 227, 232, 0.8);
+  box-shadow: 0 3px 12px rgba(58, 15, 52, 0.05);
+}
+
+.liquid-border {
+  position: relative;
+}
+
+.liquid-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(234, 170, 0, 0.5),
+    rgba(58, 15, 52, 0.4)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ========================================
+   3D Tactile Buttons
+   ======================================== */
+
+.button-3d {
+  position: relative;
+  transform: perspective(600px) translateZ(0);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.15s ease;
+  box-shadow: 
+    0 3px 0 0 rgba(0, 0, 0, 0.15),
+    0 6px 16px -2px rgba(58, 15, 52, 0.18),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.button-3d:hover {
+  transform: perspective(600px) translateY(-2px) translateZ(4px);
+  box-shadow: 
+    0 5px 0 0 rgba(0, 0, 0, 0.15),
+    0 10px 24px -2px rgba(58, 15, 52, 0.25),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
+  filter: brightness(1.05);
+}
+
+.button-3d:active {
+  transform: perspective(600px) translateY(2px) translateZ(-2px);
+  box-shadow: 
+    0 1px 0 0 rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(58, 15, 52, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+  filter: brightness(0.97);
+}
+
+/* ========================================
+   Flowing Liquid Shimmer Progress Bars
+   ======================================== */
+
+.progress-liquid {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-flow-3d 2.2s infinite linear;
+}
+
+/* ========================================
+   Staggered Entrance Animation Helpers
+   ======================================== */
+
+.animate-page-enter {
+  animation: page-enter-3d 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-1 { animation-delay: 40ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 160ms; }
+.stagger-5 { animation-delay: 200ms; }
+.stagger-6 { animation-delay: 240ms; }
+
+/* ========================================
+   Floating Elements
+   ======================================== */
+
+.float-3d {
+  animation: float-3d 5s ease-in-out infinite;
+}
+
+.float-slow-3d {
+  animation: float-slow-3d 7s ease-in-out infinite;
+}
+
+.float-reverse-3d {
+  animation: float-reverse-3d 6s ease-in-out infinite;
+}
+
+.pulse-glow-3d {
+  animation: pulse-glow-3d 3s ease-in-out infinite;
+}
+
+/* ========================================
+   Scrollbar
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(237, 241, 244, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-300);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-400);
+}
+
+/* ========================================
+   Focus Ring Utilities with 3D Depth
+   ======================================== */
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 
+    0 0 0 2px #F6F8FA,
+    0 0 0 4px var(--color-accent-500),
+    0 8px 20px -2px rgba(234, 170, 0, 0.25);
+  transform: translateY(-1px);
+}

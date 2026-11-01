@@ -1,0 +1,10 @@
+{
+  "testuser": {
+    "template": "CYBERPUNK",
+    "projectImages": {
+      "proj-123": "/uploads/portfolio/proj-123.jpg"
+    },
+    "updatedAt": "2026-10-31T07:11:23.990Z",
+    "bannerUrl": "/uploads/portfolio/test-banner.jpg"
+  }
+}
