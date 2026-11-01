@@ -79,12 +79,14 @@ export function createSmtpTransporter(cfg: ResolvedEmailConfig) {
     cfg.smtpHost?.includes("gmail.com") ||
     cfg.smtpUser?.toLowerCase().endsWith("@gmail.com");
 
+  const cleanPassword = cfg.smtpPass ? cfg.smtpPass.replace(/\s+/g, "") : "";
+
   if (isGmail) {
     return nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: cfg.smtpUser,
-        pass: cfg.smtpPass, // Gmail App Password (16 letters, e.g. "abcd efgh ijkl mnop")
+        pass: cleanPassword, // Auto-cleans any spaces from 16-letter Google App Password
       },
     });
   }
@@ -97,7 +99,7 @@ export function createSmtpTransporter(cfg: ResolvedEmailConfig) {
       cfg.smtpUser && cfg.smtpPass
         ? {
             user: cfg.smtpUser,
-            pass: cfg.smtpPass,
+            pass: cleanPassword,
           }
         : undefined,
     tls: {
