@@ -178,7 +178,7 @@ export function DevRetroTemplate({
                       href={`mailto:${user.email}?subject=TERMINAL_QUERY`}
                       className="px-3.5 py-1.5 bg-emerald-500 text-black font-extrabold text-xs rounded shadow-[0_0_10px_rgba(16,185,129,0.5)] hover:bg-emerald-400 transition-colors"
                     >
-                      mail -s "hire"
+                      {"mail -s \"hire\""}
                     </a>
                   )}
                   {onShareClick && (

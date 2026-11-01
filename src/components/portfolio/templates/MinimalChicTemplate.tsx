@@ -105,7 +105,7 @@ export function MinimalChicTemplate({
                 </h1>
 
                 <p className="text-base sm:text-lg font-serif italic text-neutral-700 leading-snug">
-                  "{user.headline || "Architecting resilient distributed software systems."}"
+                  &ldquo;{user.headline || "Architecting resilient distributed software systems."}&rdquo;
                 </p>
 
                 {(user.city || user.country) && (
